@@ -234,7 +234,7 @@ WINDOWBIN;
 				$this->dbExec($del);
 			} 
 		}
-		@setcookie($this->COOKIE_NAME, $activation_cookie_code , time() + $expire);
+		@setcookie("{$this->COOKIE_NAME}[$userid]", $activation_cookie_code , time() + $expire);
 		return true;
 	}
 
@@ -343,8 +343,8 @@ WINDOWBIN;
 	/*
 		Check validity of Activation Code from COOKIE 
 	*/
-	public function isValid () {
-		$activation_code = isset($_COOKIE[$this->COOKIE_NAME]) ? $_COOKIE[$this->COOKIE_NAME] : "";
+	public function isValid ($userid) {
+		$activation_code = isset($_COOKIE[$this->COOKIE_NAME][$userid]) ? $_COOKIE[$this->COOKIE_NAME][$userid] : "";
 		$activation_code = addslashes(preg_replace('/[^a-z0-9]/', '', strtolower($activation_code)));
 		$chk="SELECT macid FROM " . $this->DB_PREFIX . "_activations WHERE activation_code = '{$activation_code}' ";
 		$res=$this->dbExec($chk);

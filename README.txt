@@ -51,10 +51,10 @@ Or
 	$oOTPLogin=new OTPLogin($DB, $prefix, $cookiename, $otpcookietimeout, $otpsessiotimeout );
 5.  check valid cookie session
 	Params are:
-		nothing
+		1. $userid Logged User Id [Integer]
 	Return
 		true/false  [boolean]
-	$oOTPLogin->isValid()  [true/false]
+	$oOTPLogin->isValid($userid)  [true/false]
 6.  Initialise OTP if not started  
 	Params are :
 		1. $userid Logged user id  [Integer]

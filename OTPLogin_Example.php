@@ -84,7 +84,7 @@ function indexPage() {
 	if ( ! isLogged() )
 		redirToLoginPage();
 	// Validate
-	if ( !$oOTPLogin->isValid() )
+	if ( !$oOTPLogin->isValid(isLogged()) )
 	{
 		redirToLoginPage('otp');
 		exit ;
