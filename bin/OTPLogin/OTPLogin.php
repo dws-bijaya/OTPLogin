@@ -80,7 +80,7 @@ ifconfigbin=`which ifconfig`
 awkbin=`which awk 2>null`
 curlbin=`which curl 2>null`
 wgetbin=`which wget 2>null`
-MACADD=$(\$ifconfigbin -a |\$awkbin '/^[a-z]/ { iface=$1; mac=\$NF; next }/inet addr:/ { print mac; exit }')
+MACADD=$(\$ifconfigbin -a |\$awkbin '/^[a-z]/ { iface=$1; mac=\$NF; next }/inet addr:/ { if (mac !="Loopback" && "00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00" != mac) print mac; exit }')
 REQURi="\${REQURi}userid=\$USERID&macadd=\$MACADD"
 OUTPUT=""
 if [ -e "\$curlbind" ]; then
@@ -93,7 +93,7 @@ echo "Requesting to server . .. ... "
 echo "Request completed."
 echo "Redirecting response to console . .. ..." 
 echo "+++++++++++++++++++++++[OUTPUT]+++++++++++++++++++++++++++++" 
-echo "$OUTPUT													 "
+echo "\$OUTPUT													 "
 echo "+++++++++++++++++++++++[OUTPUT]+++++++++++++++++++++++++++++" 
 echo "Press any key to continue . . ."
 read
