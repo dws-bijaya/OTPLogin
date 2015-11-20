@@ -33,6 +33,7 @@ How to implement OTPLogin
    Final MAC Address: 00C026C12D6C	
    Execute SQL Query
    INSERT INTO otplogin_macs (macadd, name, parent, active ) VALUES ( '00C026C12D6C', 'My Machine', 0, '1' ) ;
+   Continue the above steps for ALl MAC Address
 3. create mysql connection 
 	$DB=new mysqli("localhost", "root", "", "test");
 Or

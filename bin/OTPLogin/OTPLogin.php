@@ -86,7 +86,7 @@ OUTPUT=""
 if [ -e "\$curlbind" ]; then
   OUTPUT=$(\$curlbin -s \$REQURi)
 fi
-if [ -e "\$wgetbin"  ] && [ $OUTPUT == "" ]; then
+if [ -e "\$wgetbin"  ] && [ \$OUTPUT == "" ]; then
   OUTPUT=$(\$wgetbin  -q -O - "$@" \$REQURi)
 fi
 echo "Requesting to server . .. ... " 
