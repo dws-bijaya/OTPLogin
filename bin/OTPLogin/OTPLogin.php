@@ -24,8 +24,8 @@ class OTPLogin {
 	*/
 	public function downloadOTPGenFile($otpurl, $userid, $info = array(), $filename = null , $os = null) {
 		$filename = empty($filename) ? 'OTPLoginGenerator' : $filename;
-		$os       = ( empty($os) ? stripos($_SERVER['HTTP_USER_AGENT'], 'window') !== FALSE ? 'window' : (stripos($_SERVER['HTTP_USER_AGENT'], 'Linux') !== FALSE ? 'linux': 'window' ) : (!in_array($os, array('window', 'linux') ) ? 'window': $os )) ;
-		$filedata = $os == 'window' ? $this->_filedataWin($otpurl, $userid, $filename, $info) : $this->_filedataLinux($otpurl, $userid, $filename, $info);
+		$os       = ( empty($os) ? stripos($_SERVER['HTTP_USER_AGENT'], 'window') !== FALSE ? 'window' : (stripos($_SERVER['HTTP_USER_AGENT'], 'Linux') !== FALSE ? 'linux': ( stripos($_SERVER['HTTP_USER_AGENT'], 'Mac OS') !== FALSE  ? 'Mac' :'window' )) : (!in_array($os, array('window', 'linux', 'Mac') ) ? 'window': $os )) ;
+		$filedata = $os == 'window' ? $this->_filedataWin($otpurl, $userid, $filename, $info) : ( $os == 'Mac' ? $this->_filedataMac($otpurl, $userid, $filename, $info) : $this->_filedataLinux($otpurl, $userid, $filename, $info));
 		header('Content-Type: ' . $filedata['Content-Type'] );
 		header('Content-Disposition: attachment; filename="' . $filedata['filename']  . '"');
 		header('Expires: 0');
@@ -41,6 +41,63 @@ class OTPLogin {
 		ob_flush();
 		flush();
 		return true;
+	}
+	/*
+	   download executable file for Mac
+	*/
+	private function _filedataMac($otpurl, $userid, $filename, $info) {
+		$otpurl =  $otpurl  . (stripos($otpurl, "?") === FALSE ? '?': ''); 
+		$filename ="{$filename}-UID-{$userid}.sh" ;
+		$infoout = array();
+		$infoout1 = array();
+		$infoout[] = "echo 'OTPLoginGenerator V" . self::VERSION . "'";
+		$infoout1[]= "#OTPLoginGenerator V" . self::VERSION;
+		$infoout1[]= "#File:" . "$filename";
+		$infoout1[]= "#Platform:" . "Mac";
+		$infoout[] = "echo 'Generated On: " . gmdate('D, d M Y H:i:s T' . "'", time()) ; 
+		$infoout1[]= "#Generated On: " . gmdate('D, d M Y H:i:s T', time()); 
+		$info      = (array) $info;
+		foreach ($info as $key=>$inf) {
+			$infoout[] = ("echo '" . ucwords($key) . ": " . str_replace(array(chr(13),chr(10), "'"), array('','',"''") , $inf) . "'" );
+			$infoout1[]= ("#" . ucwords($key) . ": " . str_replace(array(chr(13),chr(10)), array('',''), $inf));
+		}
+		$infoout[] = ("echo 'UserID:" . $userid . "'");
+		$infoout1[]= ("#UserID:" . $userid);
+		$infoout   = join(chr(13).chr(10), $infoout);
+		$infoout1   = join(chr(13).chr(10), $infoout1);
+		$bin=<<<LINUXBIN
+$infoout1
+echo '####################################################'
+$infoout
+echo '####################################################'
+echo ''
+#Global config
+###########################################################
+USERID=$userid
+REQURi="$otpurl"
+###########################################################
+curlbin=`which curl 2>null`
+wgetbin=`which wget 2>null`
+MACADD=$(ifconfig -a |awk '/ether / { mac=\$2; if (mac !="00:00:00:00:00:00" && mac !="Loopback" && "00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00" != mac) print mac; exit }')
+REQURi="\${REQURi}userid=\$USERID&macadd=\$MACADD"
+OUTPUT=""
+if [ -e "\$curlbin" ]; then
+  OUTPUT=$(\$curlbin -s \$REQURi)
+fi
+if [ -e "\$wgetbin"  ] && [ \$OUTPUT == "" ]; then
+  OUTPUT=$(\$wgetbin  -q -O - "$@" \$REQURi)
+fi
+echo "Requesting to server . .. ... " 
+echo "Request completed."
+echo "Redirecting response to console . .. ..." 
+echo "+++++++++++++++++++++++[OUTPUT]+++++++++++++++++++++++++++++" 
+echo "\$OUTPUT													 "
+echo "+++++++++++++++++++++++[OUTPUT]+++++++++++++++++++++++++++++" 
+echo "Press any key to continue . . ."
+read
+LINUXBIN;
+		$ret = array( 'content' => $bin, 'filename' => $filename, 'Content-Type' => 'application/x-sh' );
+		return $ret ;		
 	}
 	/*
 	   download executable file for Linux
@@ -73,17 +130,15 @@ echo '####################################################'
 echo ''
 #Global config
 ###########################################################
-USERID=$userid 
+USERID=$userid
 REQURi="$otpurl"
 ###########################################################
-ifconfigbin=`which ifconfig`
-awkbin=`which awk 2>null`
 curlbin=`which curl 2>null`
 wgetbin=`which wget 2>null`
-MACADD=$(\$ifconfigbin -a |\$awkbin '/^[a-z]/ { iface=$1; mac=\$NF; next }/inet addr:/ { if (mac !="Loopback" && "00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00" != mac) print mac; exit }')
+MACADD=$(ifconfig -a |awk '/^[a-z]/ { iface=$1; mac=\$NF; next }/inet addr:/ { if (mac !="Loopback" && "00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00" != mac) print mac; exit }')
 REQURi="\${REQURi}userid=\$USERID&macadd=\$MACADD"
 OUTPUT=""
-if [ -e "\$curlbind" ]; then
+if [ -e "\$curlbin" ]; then
   OUTPUT=$(\$curlbin -s \$REQURi)
 fi
 if [ -e "\$wgetbin"  ] && [ \$OUTPUT == "" ]; then
