@@ -135,7 +135,7 @@ REQURi="$otpurl"
 ###########################################################
 curlbin=`which curl 2>null`
 wgetbin=`which wget 2>null`
-MACADD=$(ifconfig -a |awk '/^[a-z]/ { iface=$1; mac=\$NF; next }/inet addr:/ { if (mac !="Loopback" && "00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00" != mac) print mac; exit }')
+MACADD=$(ifconfig -a |awk '/^[a-z]/ { iface=\$1; mac=\$NF; next }/inet addr:/ { if (mac !="Loopback" && "00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00" != mac) print mac; exit }')
 REQURi="\${REQURi}userid=\$USERID&macadd=\$MACADD"
 OUTPUT=""
 if [ -e "\$curlbin" ]; then
