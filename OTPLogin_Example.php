@@ -170,7 +170,7 @@ ECHO <<<askOTP
 	<table border='1' width="100%">
 	<tr>
 	<td width=60%>
-	<i> <b style='color:green'>Your OTP session has been started, Please download your OTP Generator file and run it to get new OTP.<i>
+	<i> <b style='color:green'>Your OTP session has been started, Please download your OTP Generator file (if you are not downloaded yet) and just run it to get new OTP.<i>
 	</b>
 	<br />
 	<hr />
