@@ -22,11 +22,27 @@ How to implement OTPLogin
 		*. Type cmd in the Open prompt of the Run menu and click OK to launch a command prompt window.
 		*. maximised the window
 		*. Type ipconfig /all at the command prompt to check the network card settings.  
-		*. The MAC address is listed by ipconfig under Physical Address. 
+		*. The MAC address is listed by ipconfig under Physical Address.
+		below sample markked between '==>' and '<==' is the mac addresss
+		-----------------------------------------------------------------
+		|Physical Address. . . . . . . . . : ==>70-54-D2-19-78-C0<==
+		----------------------------------------------------------------- 
 	For Linux Use
 		*. Open terminal
 		*. Type ifconfig and hit enter
 		*. The MAC address is listed by ipconfig under HWaddr.
+		below sample markked between '==>' and '<==' is the mac addresss
+		----------------------------------------------------
+		|Link encap:Ethernet  HWaddr ==>00:26:18:25:6E:0E<==
+		----------------------------------------------------
+	For Mac OS Use
+		*. Open terminal
+		*. Type ifconfig and hit enter
+		*. The MAC address is listed by ipconfig under ether.
+		below sample markked between '==>' and '<==' is the mac addresss
+		----------------------------------------------------
+		|ether ==>e0:34:f5:ef:d4:a0<==
+		----------------------------------------------------
 4. Add MAC Address record to table otplogin_macs
    Example: Suppose MAC Address is 00-C0-26-C1-2D-6C
    remove '-' or ':' & changed it UPPERCASE 

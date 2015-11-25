@@ -189,11 +189,11 @@ ECHO <<<askOTP
 	<td align="top" valign="middle">
 		 <center> <span>OTPLogin Generator</span> <a href="?page=download"> download </a> </center>
 		 <u><b>For window User :</u></b> <br />
-		 &nbsp;&nbsp;Run the download file i,e OTPLogin-UID-1.cmd
-		 <u><b>For linux User : </u></b><br />
+		 &nbsp;&nbsp;Run the download file i,e OTPLogin-UID-1.cmd<br />
+		 <u><b>For linux/Mac OS User : </u></b><br />
 		 &nbsp;&nbsp;1. Open terminal <br />
 		 &nbsp;&nbsp;2. chmod +x OTPLogin-UID-1.sh<br />
-		 &nbsp;&nbsp;2. ./OTPLogin-UID-1.sh
+		 &nbsp;&nbsp;2. ./OTPLogin-UID-1.sh<br />
 		 <b>Ouput</b>
 		 <pre>
 ##############################################
