@@ -24,8 +24,8 @@ class OTPLogin {
 	*/
 	public function downloadOTPGenFile($otpurl, $userid, $info = array(), $filename = null , $os = null) {
 		$filename = empty($filename) ? 'OTPLoginGenerator' : $filename;
-		$os       = ( empty($os) ? stripos($_SERVER['HTTP_USER_AGENT'], 'window') !== FALSE ? 'window' : (stripos($_SERVER['HTTP_USER_AGENT'], 'Linux') !== FALSE ? 'linux': ( stripos($_SERVER['HTTP_USER_AGENT'], 'Mac OS') !== FALSE  ? 'Mac' :'window' )) : (!in_array($os, array('window', 'linux', 'Mac') ) ? 'window': $os )) ;
-		$filedata = $os == 'window' ? $this->_filedataWin($otpurl, $userid, $filename, $info) : ( $os == 'Mac' ? $this->_filedataMac($otpurl, $userid, $filename, $info) : $this->_filedataLinux($otpurl, $userid, $filename, $info));
+		$os       = ( empty($os) ? stripos($_SERVER['HTTP_USER_AGENT'], 'window') !== FALSE ? 'Window' : (stripos($_SERVER['HTTP_USER_AGENT'], 'Linux') !== FALSE ? 'Linux': ( stripos($_SERVER['HTTP_USER_AGENT'], 'Mac OS') !== FALSE  ? 'Mac' :'Window' )) : (!in_array($os, array('Window', 'Linux', 'Mac') ) ? 'Window': $os )) ;
+		$filedata = $os == 'Window' ? $this->_filedataWin($otpurl, $userid, $filename, $info) : ( $os == 'Mac' ? $this->_filedataMac($otpurl, $userid, $filename, $info) : $this->_filedataLinux($otpurl, $userid, $filename, $info));
 		header('Content-Type: ' . $filedata['Content-Type'] );
 		header('Content-Disposition: attachment; filename="' . $filedata['filename']  . '"');
 		header('Expires: 0');
@@ -65,7 +65,8 @@ class OTPLogin {
 		$infoout1[]= ("#UserID:" . $userid);
 		$infoout   = join(chr(13).chr(10), $infoout);
 		$infoout1   = join(chr(13).chr(10), $infoout1);
-		$bin=<<<LINUXBIN
+		$bin=<<<MACBIN
+#!bash
 $infoout1
 echo '####################################################'
 $infoout
@@ -78,14 +79,13 @@ REQURi="$otpurl"
 ###########################################################
 curlbin=`which curl 2>null`
 wgetbin=`which wget 2>null`
-MACADD=$(ifconfig -a |awk '/ether / { mac=\$2; if (mac !="00:00:00:00:00:00" && mac !="Loopback" && "00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00" != mac) print mac; exit }')
+MACADD=$(ifconfig -a | awk '/ether / { mac=$2; if (mac !="00:00:00:00:00:00" && mac !="Loopback" && "00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00" != mac) print mac; exit }')
 REQURi="\${REQURi}userid=\$USERID&macadd=\$MACADD"
-OUTPUT=""
 if [ -e "\$curlbin" ]; then
-  OUTPUT=$(\$curlbin -s \$REQURi)
+  OUTPUT=\$(\$curlbin -s \$REQURi)
 fi
 if [ -e "\$wgetbin"  ] && [ \$OUTPUT == "" ]; then
-  OUTPUT=$(\$wgetbin  -q -O - "$@" \$REQURi)
+  OUTPUT=\$(\$wgetbin  -q -O - "\$@" \$REQURi)
 fi
 echo "Requesting to server . .. ... " 
 echo "Request completed."
@@ -95,7 +95,7 @@ echo "\$OUTPUT													 "
 echo "+++++++++++++++++++++++[OUTPUT]+++++++++++++++++++++++++++++" 
 echo "Press any key to continue . . ."
 read
-LINUXBIN;
+MACBIN;
 		$ret = array( 'content' => $bin, 'filename' => $filename, 'Content-Type' => 'application/x-sh' );
 		return $ret ;		
 	}
@@ -123,6 +123,7 @@ LINUXBIN;
 		$infoout   = join(chr(13).chr(10), $infoout);
 		$infoout1   = join(chr(13).chr(10), $infoout1);
 		$bin=<<<LINUXBIN
+#!bash
 $infoout1
 echo '####################################################'
 $infoout
@@ -142,7 +143,7 @@ if [ -e "\$curlbin" ]; then
   OUTPUT=$(\$curlbin -s \$REQURi)
 fi
 if [ -e "\$wgetbin"  ] && [ \$OUTPUT == "" ]; then
-  OUTPUT=$(\$wgetbin  -q -O - "$@" \$REQURi)
+  OUTPUT=$(\$wgetbin  -q -O - "\$@" \$REQURi)
 fi
 echo "Requesting to server . .. ... " 
 echo "Request completed."

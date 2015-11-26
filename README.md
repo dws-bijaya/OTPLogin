@@ -12,6 +12,13 @@ OTPLogin 1.0.0
 @desc  This light weight class can be used to add one more step secure after login using OTP from ALL pre registered Machine using MAC Addresss
 @author Bijaya Kumar Behera <it.bijaya@gmail.com> +91 9911033016
 
+system requirements
+---------------------*-
+1. HTTP Server with PHP Enabled
+2. PHP Version >=5.3
+3. Supported OS Window/Linux/Mac
+
+
 How to implement OTPLogin 
 ---------------------------------------------------
 1. Create a database "test" if not already exists
@@ -83,9 +90,13 @@ Or
 		1. $otpurl OTP URL   [String]
 		2. $userid User ID   [Integer]
 		3. $info   Info      [Array]
+		4. $downloadfilename Download File Name [NULL [String] ]
+			NULL for Auto generated file
+		5. $os OS Name    [String] [Window|Mac|Linux]
+			NULL for Auto Detected OS .
 	Reruen :
 		Void				 [null]
-	$oOTPLogin->downloadOTPGenFile($otpurl, $userid, $info); 
+	$oOTPLogin->downloadOTPGenFile($otpurl, $userid, $info, $downloadfilename, $os); 
 8. verify OTP
 	Params are :
 		1. $userid Logged user ID [Integer]
