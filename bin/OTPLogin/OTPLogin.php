@@ -450,12 +450,15 @@ WINDOWBIN;
 					}
 
 					if ($r = $this->DB->query($qry)) {
-					    /* fetch object array */
-    					while ($a = $r->fetch_assoc()) {
-        					$res[]=$a;
-    					}
-				    	/* free result set */
-    					$r->close();
+						if ( is_object($r) ) {
+							/* fetch object array */
+	    					while ($a = $r->fetch_assoc()) {
+	        					$res[]=$a;
+	    					}
+					    	/* free result set */
+	    					$r->close();
+						}
+					    
 					}
 					break;
 			case "pdo":
