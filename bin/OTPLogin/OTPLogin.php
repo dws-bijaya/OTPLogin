@@ -290,7 +290,7 @@ WINDOWBIN;
 				$this->dbExec($del);
 			} 
 		}
-		@setcookie("{$this->COOKIE_NAME}[$userid]", $activation_cookie_code , time() + $expire);
+		@setcookie("{$this->COOKIE_NAME}[$userid]", $activation_cookie_code , time() + $expire, '/');
 		return true;
 	}
 
