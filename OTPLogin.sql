@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS `otplogin_macs` (
   `macid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `macadd` varchar(50) NOT NULL,
   `name` varchar(50) NOT NULL,
+  `userid` int(11) unsigned NOT NULL DEFAULT '0',
   `parent` varchar(50) NOT NULL,
   `active` enum('0','1') NOT NULL DEFAULT '0',
   PRIMARY KEY (`macid`),
