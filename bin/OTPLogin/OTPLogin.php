@@ -301,7 +301,7 @@ WINDOWBIN;
 		$userid = (int) $userid;
 		$macadd = strtoupper(preg_replace('/[^a-z0-9]/i', '', $macadd));
 		// Check Mac Address exists ?
-		$qry="SELECT macid FROM " . $this->DB_PREFIX . "_macs WHERE macadd = '{$macadd}' AND active = '1' LIMIT 1";
+		$qry="SELECT macid, userid FROM " . $this->DB_PREFIX . "_macs WHERE macadd = '{$macadd}' AND active = '1' LIMIT 1";
 		$ret=$this->dbExec($qry);
 		// valid mac address? 
 		if ( empty($ret) ) {
@@ -310,6 +310,9 @@ WINDOWBIN;
 		//
 		$time =  time();
 		$macid = (int) $ret[0]['macid'];
+		$usrid = isset($ret[0]['userid']) ? (int)  $ret[0]['userid'] : 0;
+		if ( $usrid && $usrid != $userid )
+			return false;
 		//
 		$ip= addslashes($this->getIpAdd());
 		$qry="SELECT otp FROM " . $this->DB_PREFIX . "_otp_session WHERE userid = $userid AND $time <= expire AND ip = '$ip' AND active ='1' LIMIT 1";
@@ -402,13 +405,14 @@ WINDOWBIN;
 	public function isValid ($userid) {
 		$activation_code = isset($_COOKIE[$this->COOKIE_NAME][$userid]) ? $_COOKIE[$this->COOKIE_NAME][$userid] : "";
 		$activation_code = addslashes(preg_replace('/[^a-z0-9]/', '', strtolower($activation_code)));
-		$chk="SELECT macid FROM " . $this->DB_PREFIX . "_activations WHERE activation_code = '{$activation_code}' ";
+		$now             = time ();
+		$chk="SELECT macid FROM " . $this->DB_PREFIX . "_activations WHERE activation_code = '{$activation_code}' AND userid = '{$userid}' AND expire >='{$now}' LIMIT 1";
 		$res=$this->dbExec($chk);
 		if ( empty($res))
 			return false;
 		$this->macid = $res[0]['macid'];
 		$expire = time () + $this->ACTIVATION_EXPIRE_DAYS;
-		$update="UPDATE " . $this->DB_PREFIX . "_activations SET expire = $expire WHERE activation_code = '{$activation_code}'";
+		$update="UPDATE " . $this->DB_PREFIX . "_activations SET expire = $expire WHERE activation_code = '{$activation_code}' AND userid = '{$userid}' LIMIT 1";
 		$this->dbExec($update);
 		return true;	
 	}
