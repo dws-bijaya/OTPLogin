@@ -66,7 +66,7 @@ class OTPLogin {
 		$infoout   = join(chr(13).chr(10), $infoout);
 		$infoout1   = join(chr(13).chr(10), $infoout1);
 		$bin=<<<MACBIN
-#!bash
+#!/usr/bin/env bash
 $infoout1
 echo '####################################################'
 $infoout
