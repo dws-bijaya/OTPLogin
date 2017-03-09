@@ -123,7 +123,7 @@ MACBIN;
 		$infoout   = join(chr(13).chr(10), $infoout);
 		$infoout1   = join(chr(13).chr(10), $infoout1);
 		$bin=<<<LINUXBIN
-#!bash
+#!/usr/bin/env bash
 $infoout1
 echo '####################################################'
 $infoout
@@ -137,13 +137,16 @@ REQURi="$otpurl"
 curlbin=`which curl 2>null`
 wgetbin=`which wget 2>null`
 MACADD=$(ifconfig -a |awk '/^[a-z]/ { iface=\$1; mac=\$NF; next }/inet addr:/ { if (mac !="Loopback" && "00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00" != mac) print mac; exit }')
+if [ "\$MACADD" = "" ]; then
+	MACADD=$(ifconfig -a |awk '/^[a-z]/ { iface=\$1; mac=\$NF; if (mac !="Loopback" && "00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00" != mac) print mac;exit}/Ethernet  HWaddr / {}')
+fi			
 REQURi="\${REQURi}userid=\$USERID&macadd=\$MACADD"
 OUTPUT=""
 if [ -e "\$curlbin" ]; then
-  OUTPUT=$(\$curlbin -s \$REQURi)
+  OUTPUT=$(\$curlbin --insecure -s \$REQURi)
 fi
 if [ -e "\$wgetbin"  ] && [ \$OUTPUT == "" ]; then
-  OUTPUT=$(\$wgetbin  -q -O - "\$@" \$REQURi)
+  OUTPUT=$(\$wgetbin --no-check-certificate  -q -O - "\$@" \$REQURi)
 fi
 echo "Requesting to server . .. ... " 
 echo "Request completed."
@@ -223,7 +226,7 @@ echo WScript.Echo ^"+++++++++++++++++++++++[OUTPUT]+++++++++++++++++++++++++++++
 echo If intStatus = 200 Then
 echo	WScript.Echo objHTTP.responseText
 echo Else
-echo	WScript.Echo "OOPS" +REQURi
+echo	WScript.Echo "Sorry, Something went wrong"
 echo End If
 echo WScript.Echo ^"+++++++++++++++++++++++[OUTPUT]+++++++++++++++++++++++++++++"
 )>%TMPVBS%
@@ -301,7 +304,7 @@ WINDOWBIN;
 		$userid = (int) $userid;
 		$macadd = strtoupper(preg_replace('/[^a-z0-9]/i', '', $macadd));
 		// Check Mac Address exists ?
-		$qry="SELECT macid, userid FROM " . $this->DB_PREFIX . "_macs WHERE macadd = '{$macadd}' AND active = '1' LIMIT 1";
+		$qry="SELECT macid, userid FROM " . $this->DB_PREFIX . "_macs WHERE macadd = '{$macadd}' AND userid = $userid  AND active = '1' LIMIT 1";
 		$ret=$this->dbExec($qry);
 		// valid mac address? 
 		if ( empty($ret) ) {
